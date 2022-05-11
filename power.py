@@ -5,7 +5,7 @@ import time
 import subprocess
 from datetime import datetime
 
-DEBUG = True
+DEBUG = False
 
 # Setup the GPIO pin numbers
 POWER = 5
@@ -15,8 +15,8 @@ switches = [POWER]
 GPIO.setmode(GPIO.BOARD)
 
 for switch in switches:
-    print(switch)
-    GPIO.setup(switch, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    DEBUG and print(switch)
+    GPIO.setup(switch, GPIO.IN)
 
 oldButtonState = False
 
@@ -30,7 +30,9 @@ def power_callback(channel):
             now = datetime.now()
             current_time = now.strftime("%H:%M:%S")
             print(f"{current_time}: Switched Off")
-        subprocess.call("halt", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        DEBUG and print("halting")
+        subprocess.call("halt", shell=True)
+        DEBUG and print("halted")
 
     if buttonState != oldButtonState and not buttonState:
         if DEBUG:
