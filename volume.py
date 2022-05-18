@@ -5,9 +5,10 @@ import time
 from datetime import datetime
 import alsaaudio as audio
 
-DEBUG = True
+DEBUG = False
 
-VOLUME_STEP = 5
+TIME_INTERVAL = 0.1
+VOLUME_STEP = 1
 
 GPIO.setmode(GPIO.BOARD)
 
@@ -18,21 +19,20 @@ VOL_DOWN = 16
 switches = [VOL_UP, VOL_DOWN]
 
 for switch in switches:
-    print(switch)
+    DEBUG and print(switch)
     GPIO.setup(switch, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 
 # initialize the audio mixer controls
 
 scanCards = audio.cards()
+DEBUG and print(f"cards: {scanCards}")
 for card in scanCards:
     scanMixers = audio.mixers(scanCards.index(card))
-    print("mixers:", scanMixers)
+    DEBUG and print("mixers:", scanMixers)
 
-if DEBUG:
-    print(f"cards: {scanCards}")
 
-mixer = audio.Mixer("Headphone", cardindex=0)
+mixer = audio.Mixer("HDMI", cardindex=0)
 
 while(True):
     now = datetime.now()
@@ -53,5 +53,5 @@ while(True):
         new_volume = int(current_volume[0]) + VOLUME_STEP
         mixer.setvolume(min([100, new_volume]))
 
-    time.sleep(0.1)
+    time.sleep(TIME_INTERVAL)
 
